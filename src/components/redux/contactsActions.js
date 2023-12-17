@@ -1,62 +1,72 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
+
+import axios from 'axios';
 import toast from 'react-hot-toast';
 
+import { createAsyncThunk } from '@reduxjs/toolkit';
 const notify = name => toast(`Contact ${name} is already in contacts`);
 
-export const fetchContacts = createAsyncThunk('contacts/fetchAll', async () => {
-  const response = await fetch(
-    'https://65745b27f941bda3f2afa429.mockapi.io/contacts/items'
-  );
-  const data = await response.json();
-  return data;
-});
+axios.defaults.baseURL = 'https://connections-api.herokuapp.com';
+
+export const fetchContacts = createAsyncThunk(
+  'contacts/fetchAll',
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.get('/contacts');
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 
 export const addContact = createAsyncThunk(
-  'contacts/addContact',
-  async (newContact, { getState, rejectWithValue }) => {
-    const currentState = getState();
+  'contacts/addContacts',
+  async ({ name, number }, thunkAPI) => {
+    const currentState = thunkAPI.getState();
 
     const existingContact = currentState.contacts.items.find(
-      contact => contact.name.toLowerCase() === newContact.name.toLowerCase()
+      contact => contact.name.toLowerCase() === name.toLowerCase()
     );
 
     if (existingContact) {
       notify(existingContact.name);
-      return rejectWithValue({ error: 'Duplicate contact', existingContact });
+      return thunkAPI.rejectWithValue({
+        error: 'Duplicate contact',
+        existingContact: existingContact,
+        message: 'Contact with the same name already exists',
+      });
     }
 
     try {
-      const response = await fetch(
-        'https://65745b27f941bda3f2afa429.mockapi.io/contacts/items',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newContact),
-        }
-      );
-
-      const data = await response.json();
-      return data;
+      const response = await axios.post('/contacts', { name, number });
+      return response.data;
     } catch (error) {
-      return rejectWithValue({
-        error: 'Failed to add contact',
-        originalError: error,
-      });
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
 
+
+
+
 export const deleteContact = createAsyncThunk(
   'contacts/deleteContact',
-  async contactId => {
-    await fetch(
-      `https://65745b27f941bda3f2afa429.mockapi.io/contacts/items/${contactId}`,
-      {
-        method: 'DELETE',
-      }
-    );
+  async (contactId, thunkAPI) => {
+    try {
+    await axios.delete(`/contacts/${contactId}`);
     return contactId;
+  }catch (error) {
+    return thunkAPI.rejectWithValue(error.message);
   }
+}
 );
+
+
+
+
+
+
+
+
+
+

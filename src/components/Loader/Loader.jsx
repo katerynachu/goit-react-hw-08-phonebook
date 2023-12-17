@@ -1,16 +1,15 @@
 
 import React from 'react'
-import { RotatingLines} from  'react-loader-spinner'
+import Box from '@mui/material/Box';
+
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 
 export default function Loader() {
   return (
-<RotatingLines
-  strokeColor="grey"
-  strokeWidth="5"
-  animationDuration="0.75"
-  width="96"
-  visible={true}
-/>
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center',  }}>
+      <CircularProgress />
+    </Box>
   )
 }

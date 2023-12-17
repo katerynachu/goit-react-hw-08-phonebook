@@ -4,19 +4,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import { deleteContact, fetchContacts } from '../redux/contactsActions';
 import { selectShowContacts, selectError, selectIsLoading } from 'components/redux/selectors';
 import Loader from 'components/Loader/Loader';
+import Button from '@mui/material/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export const ContactList = () => {
   const isLoading = useSelector(selectIsLoading);
   const error = useSelector(selectError);
   const dispatch = useDispatch();
   const show = useSelector(selectShowContacts);
-
   useEffect(() => {
     dispatch(fetchContacts());
   }, [dispatch]);
 
   const handleDeleteContact = (contactId) => {
-    dispatch(deleteContact(contactId));
+    if (window.confirm('Are you sure you want to delete this contact?')) {
+      dispatch(deleteContact(contactId));
+    }
   };
   if (isLoading) {
     return <Loader />;
@@ -44,9 +47,9 @@ export const ContactList = () => {
         {show.map((contact) => (
           <ListItem key={contact.id}>
             {contact.name} : {contact.number}
-            <DeleteButton onClick={() => handleDeleteContact(contact.id)}>
-              delete
-            </DeleteButton>
+            <Button onClick={() => handleDeleteContact(contact.id)} variant="outlined" startIcon={<DeleteIcon />}>
+        Delete
+      </Button>
           </ListItem>
         ))}
       </List>
