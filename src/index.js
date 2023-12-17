@@ -7,7 +7,6 @@ import { persistor } from './components/redux/store';
 import { App } from 'components/App';
 import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter } from 'react-router-dom';
-import { lightBlue } from '@mui/material/colors';
 
 const theme = {
   colors: {

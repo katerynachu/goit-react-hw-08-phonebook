@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { List, ListItem, DeleteButton, Wrapper } from './ContactList.styled';
+import { List, ListItem, Wrapper } from './ContactList.styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteContact, fetchContacts } from '../redux/contactsActions';
 import { selectShowContacts, selectError, selectIsLoading } from 'components/redux/selectors';
